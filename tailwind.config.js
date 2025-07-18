@@ -1,4 +1,4 @@
-const { default: daisyui } = require("daisyui");
+// const { default: daisyui } = require("daisyui");
 
 module.exports = {
   content: [
