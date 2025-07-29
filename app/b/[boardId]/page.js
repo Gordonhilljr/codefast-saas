@@ -4,17 +4,23 @@ import Post from "@/models/Post";
 import { redirect } from "next/navigation";
 import FormAddPost from "@/components/FormAddPost";
 import CardPost from "@/components/CardPost";
+import { serializePost, serializeBoard } from "@/libs/serialize";
 
 const getData = async (boardId) => {
   await connectMongo();
 
   const board = await Board.findById(boardId);
-  const posts = await Post.find({ boardId }).sort({ createdAt: -1 });
+  const posts = await Post.find({ boardId })
+    .populate("voters")
+    .sort({ createdAt: -1 });
   if (!board) {
     redirect("/dashboard");
   }
 
-  return { board, posts };
+  return {
+    board: serializeBoard(board),
+    posts: posts.map((post) => serializePost(post)),
+  };
 };
 
 export default async function PublicFeedbackBoard({ params }) {

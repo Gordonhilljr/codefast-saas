@@ -7,6 +7,7 @@ import { auth } from "@/auth";
 import CardBoardLink from "@/components/CardBoardLink";
 import ButtonDeleteBoard from "@/components/ButtonDeleteBoard";
 import CardPostAdmin from "@/components/CardPostAdmin";
+import { serializePost, serializeBoard } from "@/libs/serialize";
 
 const getData = async (boardId) => {
   const session = await auth();
@@ -20,9 +21,14 @@ const getData = async (boardId) => {
     redirect("/dashboard");
   }
 
-  const posts = await Post.find({ boardId }).sort({ createdAt: -1 });
+  const posts = await Post.find({ boardId })
+    .populate("voters")
+    .sort({ createdAt: -1 });
 
-  return { board, posts };
+  return {
+    board: serializeBoard(board),
+    posts: posts.map((post) => serializePost(post)),
+  };
 };
 
 export default async function FeedbackBoard({ params }) {
@@ -54,9 +60,9 @@ export default async function FeedbackBoard({ params }) {
       <section className="max-w-5xl mx-auto px-5 py-12 flex flex-col md:flex-row gap-12">
         <div className="space-y-8">
           <h1 className="font-extrabold text-xl mb-4">{board.name}</h1>
-          <CardBoardLink boardId={board.id.toString()} />
+          <CardBoardLink boardId={board._id} />
 
-          <ButtonDeleteBoard boardId={board._id.toString()} />
+          <ButtonDeleteBoard boardId={board._id} />
         </div>
         <ul className="space-y-4">
           {posts.map((post) => (

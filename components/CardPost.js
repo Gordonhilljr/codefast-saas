@@ -1,3 +1,5 @@
+import ButtonUpvote from "@/components/ButtonUpvote";
+
 const CardPost = ({ post }) => {
   return (
     <li className="bg-base-100 rounded-3xl p-6 flex justify-between items-center">
@@ -7,7 +9,7 @@ const CardPost = ({ post }) => {
           {post.description}
         </div>
       </div>
-      <button className="btn btn-square">🔼</button>
+      <ButtonUpvote post={post} />
     </li>
   );
 };
